@@ -9,29 +9,32 @@ function socket(server) {
   const io = socketIO(server);
   console.log(`SOCKET 1 ...`);
 
-  io.use(async function (socket, next) {
+  io.use(async function(socket, next) {
+    const token = socket.handshake.query.token;
 
-    console.log('socket.connected: ', socket.connected);
-    // console.log('socket.disconnected: ', socket.disconnected);
+    if (!token) return next(new Error('anonymous sessions are not allowed'));
+
+    const session = await Session.findOne({token}).populate('user');
+
+    if (!session) return next(new Error('wrong or expired session token'));
+
+    socket.user = session.user;
+
     next();
   });
 
-  io.on('connection', function (socket) {
-    console.log(`SOCKET connection ...`);
-
+  io.on('connection', function(socket) {
     socket.on('message', async (msg) => {
-      console.log(`SOCKET message ...`, msg);
+      const date = new Date();
 
-    });
-    
-    socket.on(`disconnect`, () => {
-      console.log(`disconnection...`);
+      await Message.create({
+        chat: socket.user.id,
+        user: socket.user.displayName,
+        text: msg,
+        date: date,
+      });
     });
   });
-
-
-  // socket.user = session.user; 
-
 
   return io;
 }
