@@ -3,11 +3,9 @@ const socketIO = require('socket.io');
 const Session = require('./models/Session');
 const Message = require('./models/Message');
 
-console.log(`SOCKET LOAD >>>`);
 
 function socket(server) {
   const io = socketIO(server);
-  console.log(`SOCKET 1 ...`);
 
   io.use(async function(socket, next) {
     const token = socket.handshake.query.token;

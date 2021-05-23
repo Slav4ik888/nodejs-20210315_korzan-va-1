@@ -20,10 +20,7 @@ const app = new Koa();
 
 app.use(require('koa-bodyparser')());
 
-console.log(`0 - start`);
-
 app.use(async (ctx, next) => {
-  
   try {
     await next();
 

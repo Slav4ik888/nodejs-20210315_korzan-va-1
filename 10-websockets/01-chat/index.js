@@ -1,5 +1,4 @@
 const app = require('./app');
-// const server = require('./app');
 const socket = require('./socket');
 
 const server = app.listen(3000, () => {
