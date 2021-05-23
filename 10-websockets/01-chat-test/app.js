@@ -23,11 +23,17 @@ const app = new Koa();
 app.use(require('koa-bodyparser')());
 app.use(require('koa-static')(path.join(__dirname, 'public')));
 
+console.log(`0 - start`);
+
 app.use(async (ctx, next) => {
   try {
+    console.log(`1 - start`);
     await next();
+    console.log(`2 - continue...`);
+
   } catch (err) {
     if (err.status) {
+      console.log('err.status: ', err.status);
       ctx.status = err.status;
       ctx.body = {error: err.message};
     } else {
@@ -41,7 +47,7 @@ app.use(async (ctx, next) => {
 app.use((ctx, next) => {
   ctx.login = async function(user) {
     const token = uuid();
-    await Session.create({token, user, lastVisit: new Date()});
+    await Session.create({ token, user, lastVisit: new Date() });
 
     return token;
   };
@@ -64,7 +70,7 @@ router.use(async (ctx, next) => {
   }
   session.lastVisit = new Date();
   await session.save();
-
+  
   ctx.user = session.user;
   return next();
 });
@@ -94,6 +100,8 @@ app.use(router.routes());
 // this for HTML5 history in browser
 const index = fs.readFileSync(path.join(__dirname, 'public/index.html'));
 app.use(async (ctx, next) => {
+  console.log('ctx.url: ', ctx.url);
+
   if (!ctx.url.startsWith('/api')) {
     ctx.set('content-type', 'text/html');
     ctx.body = index;
