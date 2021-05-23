@@ -26,6 +26,7 @@ app.use(require('koa-static')(path.join(__dirname, 'public')));
 console.log(`0 - start`);
 
 app.use(async (ctx, next) => {
+  
   try {
     console.log(`1 - start`);
     await next();

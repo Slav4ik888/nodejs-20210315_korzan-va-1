@@ -7,14 +7,10 @@ console.log(`SOCKET LOAD >>>`);
 
 function socket(server) {
   const io = socketIO(server);
+  console.log(`SOCKET 1 ...`);
 
   io.use(async function (socket, next) {
-    console.log(`SOCKET 1 ...`);
-    // server.use((ctx, next) => {
-    //   console.log(`ctx.url: `, ctx.url);
 
-    // })
-    console.log(socket.url);
     console.log('socket.connected: ', socket.connected);
     // console.log('socket.disconnected: ', socket.disconnected);
     next();
@@ -22,10 +18,14 @@ function socket(server) {
 
   io.on('connection', function (socket) {
     console.log(`SOCKET connection ...`);
-    
+
     socket.on('message', async (msg) => {
       console.log(`SOCKET message ...`, msg);
 
+    });
+    
+    socket.on(`disconnect`, () => {
+      console.log(`disconnection...`);
     });
   });
 
